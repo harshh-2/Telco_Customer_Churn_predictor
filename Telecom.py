@@ -18,6 +18,39 @@ data.drop(labels=data[data['tenure'] == 0].index, axis=0, inplace=True)
 data = pd.get_dummies(data, drop_first=True)
 data = data.drop_duplicates()
 
+#Data Visualisation for better understanding
+
+#Contract_Two year vs Churn rate
+#Customers with long-term contracts demonstrate significantly lower churn probability, indicating commitment duration is a major retention factor.
+churn_rate = data.groupby('Contract_Two year')['Churn_Yes'].mean()
+plt.figure(figsize=(5,4))
+churn_rate.plot(kind='bar')
+plt.title("Churn Rate by Two-Year Contract")
+plt.ylabel("Probability of Churn")
+plt.xticks([0,1], ['No', 'Yes'], rotation=0)
+plt.show()
+
+
+#Credit card vs Churn Rate
+#Automatic payment is associated with reduced churn, possibly due to ease and stronger service continuity.
+churn_rate = data.groupby('PaymentMethod_Credit card (automatic)')['Churn_Yes'].mean()
+plt.figure(figsize=(5,4))
+churn_rate.plot(kind='bar')
+plt.title("Churn Rate by Credit Card Payment Subscription")
+plt.ylabel("Probability of Churn")
+plt.xticks([0,1], ['No', 'Yes'], rotation=0)
+plt.show()
+
+#Multiple lines vs churn
+#The association is present but modest, suggesting this variable is not a dominant driver.
+churn_rate = data.groupby('MultipleLines_Yes')['Churn_Yes'].mean()
+plt.figure(figsize=(5,4))
+churn_rate.plot(kind='bar')
+plt.title("Churn Rate by Multiple Lines")
+plt.ylabel("Probability of Churn")
+plt.xticks([0,1], ['No', 'Yes'], rotation=0)
+plt.show()
+
 #Training-Validation split of the data
 
 X = data.drop('Churn_Yes' , axis =1)
@@ -30,10 +63,10 @@ model = LogisticRegression(max_iter=5000, random_state=42, penalty='l1', solver=
 model.fit(X_train, y_train)
 y_pred_lr = model.predict(X_val)
 print("LOGISTIC REGRESSION RESULTS")
-print("Accuracy:", accuracy_score(y_val, y_pred_lr)*100)
-print("Precision:", precision_score(y_val, y_pred_lr)*100)
-print("Recall:", recall_score(y_val, y_pred_lr)*100)
-print("F1 Score:", f1_score(y_val, y_pred_lr)*100)
+print(f"Accuracy: {accuracy_score(y_val, y_pred_lr)*100:.2f}%")
+print(f"Precision: {precision_score(y_val, y_pred_lr)*100:.2f}%")
+print(f"Recall: {recall_score(y_val, y_pred_lr)*100:.2f}%")
+print(f"F1 Score: {f1_score(y_val, y_pred_lr)*100:.2f}%")
 print("\nClassification Report:\n", classification_report(y_val, y_pred_lr))
 
 #Random Forest Classifier used as improved model for binary classification
@@ -42,10 +75,10 @@ model2 = RandomForestClassifier(n_estimators=400,class_weight='balanced',random_
 model2.fit(X_train, y_train)
 y_pred_rf = model2.predict(X_val)
 print("RANDOM FOREST RESULTS")
-print("Accuracy:", accuracy_score(y_val, y_pred_rf)*100)
-print("Precision:", precision_score(y_val, y_pred_rf)*100)
-print("Recall:", recall_score(y_val, y_pred_rf)*100)
-print("F1 Score:", f1_score(y_val, y_pred_rf)*100)
+print(f"Accuracy: {accuracy_score(y_val, y_pred_rf)*100:.2f}%")
+print(f"Precision: {precision_score(y_val, y_pred_rf)*100:.2f}%")
+print(f"Recall: {recall_score(y_val, y_pred_rf)*100:.2f}%")
+print(f"F1 Score: {f1_score(y_val, y_pred_rf)*100:.2f}%")
 print("\nClassification Report:\n", classification_report(y_val, y_pred_rf))
 
 #Comparasion between baseline and improved model based upon accuracy, precision, recall, and F1 score
